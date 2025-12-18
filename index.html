@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ลงทะเบียนกิจกรรมคริสต์มาส</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    /* Keep all the existing styles */
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 16px;
+      background: #000
+        url('https://firebasestorage.googleapis.com/v0/b/pichayut-40dd2.firebasestorage.app/o/pexels-cottonbro-6072439.jpg?alt=media&token=7732ed40-e69f-477e-b342-571957c9c09a')
+        no-repeat center center fixed;
+      background-size: cover;
+      color: #f9fafb;
+      min-height: 100vh;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 1.4rem;
+      color: #fefce8;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+    .card {
+      max-width: 540px;
+      margin: 0 auto;
+      background: rgba(15,23,42,0.85);
+      border-radius: 16px;
+      padding: 16px 16px 20px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45);
+      border: 1px solid rgba(248,250,252,0.15);
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #4b5563;
+      font-size: 16px;
+      margin-bottom: 10px;
+      background: rgba(15,23,42,0.9);
+      color: #f9fafb;
+    }
+    input[type="text"]:disabled {
+      background: rgba(55,65,81,0.5);
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+    input[type="text"]::placeholder {
+      color: #9ca3af;
+    }
+    .row-2 {
+      display: flex;
+      gap: 8px;
+    }
+    .row-2 > div {
+      flex: 1 1 0;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.2s;
+      white-space: nowrap;
+    }
+    button:active {
+      transform: scale(0.97);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #fefce8;
+      box-shadow: 0 4px 12px rgba(22,163,74,0.6);
+    }
+    .btn-secondary {
+      background: rgba(31,41,55,0.9);
+      color: #e5e7eb;
+      border: 1px solid rgba(148,163,184,0.7);
+    }
+    .btn-full {
+      width: 100%;
+      margin-top: 6px;
+    }
+    .msg {
+      font-size: 0.85rem;
+      margin-top: 2px;
+      margin-bottom: 6px;
+    }
+    .msg.info { color: #bfdbfe; }
+    .msg.warn { color: #fbbf24; }
+    .msg.error { color: #fecaca; }
+
+    /* === TICKET DESIGNS === */
+    .ticket-wrap {
+      max-width: 360px;
+      margin: 16px auto 0;
+    }
+    .ticket {
+      background: #fff;
+      color: #333;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.3);
+      border: 1px solid #e5e7eb;
+    }
+    .ticket-header {
+      background: linear-gradient(135deg, #b91c1c, #dc2626);
+      color: #fff;
+      padding: 12px 16px;
+      text-align: center;
+    }
+    .ticket-header h2 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .ticket-header p {
+      margin: 4px 0 0;
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+    .ticket-body {
+      padding: 20px;
+    }
+    .ticket-field {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+    .ticket-field-label {
+      font-weight: 600;
+      color: #6b7280;
+    }
+    .ticket-field-value {
+      font-weight: 500;
+      color: #111827;
+    }
+    .perforation {
+      height: 20px;
+      background-image: repeating-linear-gradient(
+        to right,
+        #e5e7eb,
+        #e5e7eb 8px,
+        transparent 8px,
+        transparent 16px
+      );
+      border-top: 2px dashed #9ca3af;
+      border-bottom: 2px dashed #9ca3af;
+      position: relative;
+    }
+    .perforation::before, .perforation::after {
+      content: '✂';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      font-size: 1rem;
+    }
+    .perforation::before { left: 10px; }
+    .perforation::after { right: 10px; }
+    .ticket-stub {
+      background: #f9fafb;
+      padding: 20px;
+      text-align: center;
+      border-top: 1px solid #e5e7eb;
+    }
+    .ticket-stub-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+    .ticket-qr-label {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-top: 8px;
+    }
+    .ticket-print-btn {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+    }
+    .hidden { display: none; }
+    .footer-tip {
+      max-width: 540px;
+      margin: 10px auto 0;
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      text-align: center;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+    }
+    .loading {
+      font-size: 0.8rem;
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+    }
+    .loading-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #9ca3af;
+      animation: blink 1s infinite ease-in-out;
+    }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+      0%, 80%, 100% { opacity: 0.2; }
+      40% { opacity: 1; }
+    }
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      .card { padding: 12px 12px 16px; }
+      .row-2 { flex-direction: column; }
+    }
+    @media print {
+      body { background: #fff; padding: 0; }
+      .card, .footer-tip { display: none !important; }
+      .ticket-wrap { margin: 0 auto; }
+      .ticket { box-shadow: none; border: 1px solid #ccc; }
+      .ticket-print-btn { display: none !important; }
+    }
+    .empid-wrap { position: relative; }
+    #empIdSuggestions {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      margin-top: 2px;
+      background: rgba(15,23,42,0.98);
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.8);
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 30;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    }
+    .suggest-list { padding: 4px 0; }
+    .suggest-item {
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .suggest-item:hover { background: rgba(55,65,81,0.9); }
+    .suggest-item strong { font-weight: 700; color: #facc15; }
+    .suggest-item.registered { color: #86efac; }
+    .suggest-empty {
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎄 ลงทะเบียนกิจกรรมคริสต์มาส 🎁</h1>
+
+  <div class="card">
+    <div style="margin-bottom: 10px; font-size: 0.85rem; color:#e5e7eb;">
+      แบบฟอร์มนี้ใช้สำหรับลงทะเบียนกิจกรรมคริสต์มาส<br>
+      - พิมพ์รหัสพนักงาน **5 ตัวท้าย** แล้วเลือกจากรายการ<br>
+      - รายการที่มี ✅ หมายถึงพนักงานที่ลงทะเบียนแล้ว<br>
+      - กดปุ่ม "ลงทะเบียน" เพื่อบันทึกข้อมูลและแสดงคูปอง
+    </div>
+
+    <label for="empId">รหัสพนักงาน</label>
+    <div class="empid-wrap">
+      <input type="text" id="empId" placeholder="พิมพ์รหัสพนักงาน 5 ตัวท้าย" autocomplete="off">
+      <div id="empIdSuggestions" class="hidden"></div>
+    </div>
+    <div id="msgEmp" class="msg"></div>
+
+    <div class="row-2">
+      <div>
+        <label for="firstName">ชื่อ</label>
+        <input type="text" id="firstName" placeholder="ชื่อจริง" disabled>
+      </div>
+      <div>
+        <label for="lastName">นามสกุล</label>
+        <input type="text" id="lastName" placeholder="นามสกุล" disabled>
+      </div>
+    </div>
+
+    <label for="department">ฝ่าย / แผนก</label>
+    <input type="text" id="department" placeholder="เช่น Top Department" disabled>
+
+    <!-- ปุ่มหลักสำหรับลงทะเบียน -->
+    <div class="btn-row">
+      <button type="button" class="btn-primary btn-full" id="registerBtn" onclick="registerEmployee()" disabled>
+        📝 ลงทะเบียน
+      </button>
+      <span id="loadingRegister" class="loading hidden">
+        <span class="loading-dot"></span>
+        <span class="loading-dot"></span>
+        <span class="loading-dot"></span>
+      </span>
+    </div>
+    <div id="msgStatus" class="msg"></div>
+  </div>
+
+  <!-- TICKET SECTION (จะถูกแทนที่ด้วย JavaScript) -->
+  <div id="ticketSection" class="ticket-wrap hidden">
+    <!-- Content will be dynamically generated here -->
+  </div>
+
+  <div class="footer-tip">
+    เปิดจากมือถือสามารถถ่ายรูปหน้าจอ หรือกด "พิมพ์คูปอง" เพื่อเก็บคูปองได้เลย 🎅
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzSOETgXkTxsoqsGorjhI513B8iayT5tfXhXhE9iZSPdchz3zL9iHvCW5kx3cBJbGyaaQ/exec';
+
+    var empMap = {};
+    var empIndex = [];
+    var lastSavedRecord = null;
+    var isRegistered = false;
+    var isLoading = false;
+
+    function debounce(fn, delay) {
+      var t = null;
+      return function() {
+        var ctx = this, args = arguments;
+        clearTimeout(t);
+        t = setTimeout(function() { fn.apply(ctx, args); }, delay);
+      };
+    }
+
+    function setLoading(isLoadingState, buttonsToDisable = []) {
+      isLoading = isLoadingState;
+      setLoading('loadingRegister', isLoadingState && buttonsToDisable.includes('registerBtn'));
+      
+      buttonsToDisable.forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) btn.disabled = isLoadingState;
+      });
+    }
+
+    function setLoading(id, isLoadingState) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.toggle('hidden', !isLoadingState);
+    }
+
+    async function apiGetEmployees() {
+      const res = await fetch(API_URL + '?action=getEmployees', { cache: 'no-store' });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || 'API error');
+      return (json.result && json.result.employees) || [];
+    }
+
+    async function apiSaveEmployee(employeeData) {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'saveEmployee',
+          payload: employeeData
+        })
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || 'API error');
+      return json.result;
+    }
+
+    function setMsg(id, text, type) {
+      var el = document.getElementById(id);
+      el.textContent = text || '';
+      el.className = 'msg ' + (type || '');
+    }
+
+    function fillFormFromRecord(record) {
+      if (!record) return;
+      document.getElementById('empId').value      = record.empId || '';
+      document.getElementById('firstName').value  = record.firstName || '';
+      document.getElementById('lastName').value   = record.lastName || '';
+      document.getElementById('department').value = record.department || '';
+      
+      if (record.registrationDate) {
+        // กรณีที่ 1: ลงทะเบียนแล้ว
+        setMsg('msgEmp', 'ลงทะเบียนแล้ว', 'info');
+        document.getElementById('registerBtn').disabled = true;
+        document.getElementById('registerBtn').textContent = '✅ ลงทะเบียนแล้ว';
+        lastSavedRecord = record;
+        isRegistered = true;
+        document.getElementById('ticketSection').classList.add('hidden');
+      } else {
+        // กรณีที่ 2: ยังไม่ได้ลงทะเบียน
+        setMsg('msgEmp', 'พร้อมลงทะเบียน', 'info');
+        document.getElementById('registerBtn').disabled = false;
+        document.getElementById('registerBtn').textContent = '📝 ลงทะเบียน';
+        lastSavedRecord = record;
+        isRegistered = false;
+        document.getElementById('ticketSection').classList.add('hidden');
+      }
+    }
+
+    function clearFormForNew(empId) {
+      document.getElementById('firstName').value  = '';
+      document.getElementById('lastName').value   = '';
+      document.getElementById('department').value = '';
+      if (empId) {
+        setMsg('msgEmp', 'ไม่พบรหัสนี้ในระบบ', 'warn');
+      } else {
+        setMsg('msgEmp', '', '');
+      }
+      setMsg('msgStatus', '', '');
+      lastSavedRecord = null;
+      isRegistered = false;
+      document.getElementById('registerBtn').disabled = true;
+      document.getElementById('registerBtn').textContent = '📝 ลงทะเบียน';
+      document.getElementById('ticketSection').classList.add('hidden');
+    }
+
+    function buildEmpIndex(list) {
+      empIndex = [];
+      (list || []).forEach(function(r) {
+        if (!r.empId) return;
+        var id = String(r.empId);
+        var fullName = r.fullName || ((r.firstName || '') + ' ' + (r.lastName || '')).trim();
+        var last5 = id.slice(-5);
+        var key = (id + ' ' + last5 + ' ' + fullName).toLowerCase();
+        
+        var isRegistered = (r.registrationDate !== null);
+        var displayLabel = isRegistered ? '✅ ' + fullName : fullName;
+
+        empIndex.push({ 
+          empId: id, 
+          fullName: fullName, 
+          label: (id + ' ' + displayLabel).trim(), 
+          key: key,
+          isRegistered: isRegistered 
+        });
+      });
+    }
+
+    function renderEmpSuggestions(query) {
+      var panel = document.getElementById('empIdSuggestions');
+      panel.innerHTML = '';
+      panel.classList.add('hidden');
+      var q = (query || '').trim();
+      if (!q) return;
+      var lower = q.toLowerCase();
+      var results = [];
+      var MAX_RESULTS = 20;
+      for (var i = 0; i < empIndex.length; i++) {
+        var item = empIndex[i];
+        if (item.key.indexOf(lower) !== -1) {
+          results.push(item);
+          if (results.length >= MAX_RESULTS) break;
+        }
+      }
+      if (!results.length) {
+        var empty = document.createElement('div');
+        empty.className = 'suggest-empty';
+        empty.textContent = 'ไม่พบรหัสที่ใกล้เคียง';
+        panel.appendChild(empty);
+        panel.classList.remove('hidden');
+        return;
+      }
+      var container = document.createElement('div');
+      container.className = 'suggest-list';
+      results.forEach(function(item) {
+        var row = document.createElement('div');
+        row.className = 'suggest-item';
+        if (item.isRegistered) {
+            row.classList.add('registered');
+        }
+        row.dataset.empId = item.empId;
+        var strong = document.createElement('strong');
+        strong.textContent = item.empId;
+        row.appendChild(strong);
+        if (item.fullName) {
+          var spanName = document.createElement('span');
+          spanName.textContent = ' • ' + item.fullName;
+          row.appendChild(spanName);
+        }
+        row.addEventListener('click', function() {
+          selectEmpIdFromSuggestion(this.dataset.empId);
+        });
+        container.appendChild(row);
+      });
+      panel.appendChild(container);
+      panel.classList.remove('hidden');
+    }
+
+    function hideEmpSuggestions() {
+      var panel = document.getElementById('empIdSuggestions');
+      panel.innerHTML = '';
+      panel.classList.add('hidden');
+    }
+
+    function selectEmpIdFromSuggestion(empId) {
+      var input = document.getElementById('empId');
+      input.value = empId;
+      hideEmpSuggestions();
+      var rec = empMap[empId];
+      if (rec) {
+        fillFormFromRecord(rec);
+      } else {
+        clearFormForNew(empId);
+      }
+    }
+
+    async function initEmpIds() {
+      try {
+        setMsg('msgEmp', 'กำลังโหลดข้อมูลรหัสพนักงาน...', 'info');
+        const list = await apiGetEmployees();
+        
+        empMap = {};
+        (list || []).forEach(function(r) {
+          if (!r.empId) return;
+          
+          var currentRecord = empMap[r.empId];
+          
+          if (!currentRecord) {
+            empMap[r.empId] = r;
+          } else {
+            if (!currentRecord.firstName && r.firstName && r.lastName) {
+              empMap[r.empId] = r;
+            }
+          }
+        });
+
+        buildEmpIndex(list);
+        setMsg('msgEmp', 'พิมพ์รหัสพนักงาน 5 ตัวท้ายเพื่อค้นหา', 'info');
+      } catch (err) {
+        console.error(err);
+        setMsg('msgEmp', 'โหลดข้อมูลรหัสพนักงานไม่สำเร็จ: ' + err.message, 'error');
+      }
+    }
+
+    // ฟังก์ชันหลัก: ลงทะเบียนพนักงาน
+    async function registerEmployee() {
+      if (isLoading) return;
+      if (!lastSavedRecord) {
+        alert('ไม่มีข้อมูลสำหรับลงทะเบียน กรุณาเลือกพนักงาน');
+        return;
+      }
+      
+      if (isRegistered) {
+        alert('พนักงานคนนี้ลงทะเบียนแล้ว');
+        return;
+      }
+      
+      try {
+        setLoading(true, ['registerBtn']);
+        setMsg('msgStatus', 'กำลังลงทะเบียน...', 'info');
+        
+        // ส่งข้อมูลไปบันทึกใน Google Sheets
+        const result = await apiSaveEmployee({
+          empId: lastSavedRecord.empId,
+          firstName: lastSavedRecord.firstName,
+          lastName: lastSavedRecord.lastName,
+          department: lastSavedRecord.department
+        });
+        
+        if (result && result.success) {
+          // อัปเดตข้อมูลหลังจากบันทึกสำเร็จ
+          lastSavedRecord = result.record;
+          isRegistered = true;
+          
+          // อัปเดต UI
+          document.getElementById('registerBtn').textContent = '✅ ลงทะเบียนแล้ว';
+          document.getElementById('registerBtn').disabled = true;
+          setMsg('msgStatus', 'ลงทะเบียนสำเร็จ!', 'info');
+          setMsg('msgEmp', 'ลงทะเบียนแล้ว', 'info');
+          
+          // แสดงคูปอง
+          renderFullTicket();
+        } else {
+          throw new Error('ไม่สามารถบันทึกข้อมูลได้');
+        }
+      } catch (err) {
+        console.error(err);
+        setMsg('msgStatus', 'ลงทะเบียนไม่สำเร็จ: ' + err.message, 'error');
+      } finally {
+        setLoading(false, ['registerBtn']);
+      }
+    }
+
+    function renderTicketQr(empId) {
+      var container = document.getElementById('ticketQr');
+      if (!container) return;
+      container.innerHTML = '';
+      if (!empId) return;
+      new QRCode(container, {
+        text: String(empId),
+        width: 128,
+        height: 128
+      });
+    }
+
+    // ฟังก์ชันแสดงคูปองแบบเต็ม
+    function renderFullTicket() {
+      if (!lastSavedRecord) return;
+
+      var showName = lastSavedRecord.fullName || '-';
+      var showDept  = lastSavedRecord.department || '-';
+      var showEmp   = lastSavedRecord.empId || '-';
+      
+      var ticketHTML = `
+        <div class="ticket">
+          <div class="ticket-header">
+            <h2>🎄 Christmas Event 🎁</h2>
+            <p>Registration Confirmation</p>
+          </div>
+          <div class="ticket-body">
+            <div class="ticket-field">
+              <span class="ticket-field-label">ชื่อ-นามสกุล</span>
+              <span class="ticket-field-value">${showName}</span>
+            </div>
+            <div class="ticket-field">
+              <span class="ticket-field-label">ฝ่าย / แผนก</span>
+              <span class="ticket-field-value">${showDept}</span>
+            </div>
+            <div class="ticket-field">
+              <span class="ticket-field-label">รหัสพนักงาน</span>
+              <span class="ticket-field-value">${showEmp}</span>
+            </div>
+          </div>
+          <div class="perforation"></div>
+          <div class="ticket-stub">
+            <div class="ticket-stub-label">ส่วนสำหรับตัด</div>
+            <div id="ticketQr"></div>
+            <div class="ticket-qr-label">สแกน QR นี้เพื่อยืนยันตัวตน</div>
+          </div>
+        </div>
+        <div class="ticket-print-btn">
+          <button type="button" class="btn-secondary" onclick="printTicket()">
+            🖨️ พิมพ์คูปอง
+          </button>
+        </div>
+      `;
+      
+      document.getElementById('ticketSection').innerHTML = ticketHTML;
+      renderTicketQr(showEmp);
+
+      document.getElementById('ticketSection').classList.remove('hidden');
+      window.scrollTo({
+        top: document.getElementById('ticketSection').offsetTop - 10,
+        behavior: 'smooth'
+      });
+    }
+
+    function printTicket() {
+      const section = document.getElementById('ticketSection');
+      if (section.classList.contains('hidden')) {
+        alert('ยังไม่มีคูปองให้พิมพ์ กรุณาลงทะเบียนก่อน');
+        return;
+      }
+      window.print();
+    }
+
+    // ==== Events ====
+    var handleEmpIdInputDebounced = debounce(function() {
+      var v = document.getElementById('empId').value;
+      renderEmpSuggestions(v);
+      var trimmed = v.trim();
+      if (trimmed && empMap[trimmed]) {
+        fillFormFromRecord(empMap[trimmed]);
+      } else if (!trimmed) {
+        clearFormForNew('');
+      }
+    }, 180);
+
+    document.getElementById('empId').addEventListener('input', handleEmpIdInputDebounced);
+    document.getElementById('empId').addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        hideEmpSuggestions();
+      }
+    });
+    document.addEventListener('click', function(e) {
+      var wrap = document.querySelector('.empid-wrap');
+      if (!wrap.contains(e.target)) {
+        hideEmpSuggestions();
+      }
+    });
+
+    initEmpIds();
+  </script>
+</body>
+</html>

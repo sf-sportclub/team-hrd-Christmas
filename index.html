@@ -15,7 +15,7 @@
       margin: 0;
       padding: 16px;
       background: #000
-        url('https://firebasestorage.googleapis.com/v0/b/pichayut-40dd2.firebasestorage.app/o/pexels-cottonbro-6072439.jpg?alt=media&token=7732ed40-e69f-477e-b342-571957c9c09a')
+        url('https://firebasestorage.googleapis.com/v0/b/pichayut-40dd2.firebasestorage.app/o/anime-moon-landscape.jpg?alt=media&token=cfa685f0-a3b6-499c-99e2-83e4f7205b6a')
         no-repeat center center fixed;
       background-size: cover;
       color: #f9fafb;
@@ -119,6 +119,7 @@
     .msg.info { color: #bfdbfe; }
     .msg.warn { color: #fbbf24; }
     .msg.error { color: #fecaca; }
+    .msg.success { color: #86efac; }
 
     /* === TICKET DESIGNS === */
     .ticket-wrap {
@@ -294,6 +295,17 @@
       box-shadow: none !important;
       cursor: not-allowed !important;
     }
+    /* สไตล์สำหรับการแสดงผลการลงทะเบียนสำเร็จ */
+    .success-message {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 1rem;
+      color: #86efac;
+    }
   </style>
 </head>
 <body>
@@ -304,7 +316,7 @@
       แบบฟอร์มนี้ใช้สำหรับลงทะเบียนกิจกรรมคริสต์มาส<br>
       - พิมพ์รหัสพนักงาน **5 ตัวท้าย** แล้วเลือกจากรายการ<br>
       - รายการที่มี ✅ หมายถึงพนักงานที่ลงทะเบียนแล้ว<br>
-      - กดปุ่ม "ลงทะเบียน" เพื่อบันทึกข้อมูลและแสดงคูปอง
+      - กดปุ่ม "ลงทะเบียน" เพื่อบันทึกข้อมูล
     </div>
 
     <label for="empId">รหัสพนักงาน</label>
@@ -340,6 +352,12 @@
       </span>
     </div>
     <div id="msgStatus" class="msg"></div>
+    
+    <!-- ส่วนแสดงผลการลงทะเบียนสำเร็จ -->
+    <div id="successMessage" class="success-message hidden">
+      <div style="font-size: 1.2rem; margin-bottom: 5px;">✅ ลงทะเบียนสำเร็จแล้ว!</div>
+      <div>ขอบคุณที่เข้าร่วมกิจกรรมคริสต์มาส</div>
+    </div>
   </div>
 
   <!-- TICKET SECTION (จะถูกแทนที่ด้วย JavaScript) -->
@@ -348,7 +366,7 @@
   </div>
 
   <div class="footer-tip">
-    เปิดจากมือถือสามารถถ่ายรูปหน้าจอ หรือกด "พิมพ์คูปอง" เพื่อเก็บคูปองได้เลย 🎅
+    เปิดจากมือถือสามารถถ่ายรูปหน้าจอเพื่อเก็บข้อมูลการลงทะเบียนได้เลย 🎅
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -433,6 +451,7 @@
         lastSavedRecord = record;
         isRegistered = true;
         document.getElementById('ticketSection').classList.add('hidden');
+        document.getElementById('successMessage').classList.remove('hidden');
       } else {
         // กรณีที่ 2: ยังไม่ได้ลงทะเบียน
         setMsg('msgEmp', 'พร้อมลงทะเบียน', 'info');
@@ -442,6 +461,7 @@
         lastSavedRecord = record;
         isRegistered = false;
         document.getElementById('ticketSection').classList.add('hidden');
+        document.getElementById('successMessage').classList.add('hidden');
       }
     }
 
@@ -463,6 +483,7 @@
       registerBtn.textContent = '📝 ลงทะเบียน';
       registerBtn.classList.remove('btn-disabled-permanent');
       document.getElementById('ticketSection').classList.add('hidden');
+      document.getElementById('successMessage').classList.add('hidden');
     }
 
     function buildEmpIndex(list) {
@@ -620,11 +641,14 @@
           registerBtn.textContent = '✅ ลงทะเบียนแล้ว';
           registerBtn.disabled = true;
           registerBtn.classList.add('btn-disabled-permanent');
-          setMsg('msgStatus', 'ลงทะเบียนสำเร็จ!', 'info');
+          setMsg('msgStatus', 'ลงทะเบียนสำเร็จ!', 'success');
           setMsg('msgEmp', '❌ ลงทะเบียนแล้ว', 'warn');
           
-          // แสดงคูปอง
-          renderFullTicket();
+          // แสดงข้อความสำเร็จแทนคูปอง
+          document.getElementById('successMessage').classList.remove('hidden');
+          
+          // ไม่แสดงคูปองแล้ว (เพิ่มความเร็วในการลงทะเบียน)
+          // renderFullTicket();
         } else {
           throw new Error('ไม่สามารถบันทึกข้อมูลได้');
         }

@@ -371,7 +371,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxdyKHXPrB6PYKUrnw6xDgTHzeb2u15y7VzQjxWB1JixjCh8S64EvUhGOLsIoHEVrmY/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycby-xtIZOamI8Ohjh6xg-fgv_cGGpJ4PP4PH26IQaty4UIxbXC5X1O5-UvFZBniAk5LO/exec';
 
     var empMap = {};
     var empIndex = [];
@@ -411,7 +411,7 @@
       return (json.result && json.result.employees) || [];
     }
 
-    // แก้ไขฟังก์ชัน apiSaveEmployee ให้ใช้ GET request แทน POST
+    // ใช้ GET request สำหรับความเข้ากันได้กับ GitHub Pages
     async function apiSaveEmployee(employeeData) {
       const url =
         API_URL +
@@ -441,6 +441,8 @@
       document.getElementById('department').value = record.department || '';
       
       const registerBtn = document.getElementById('registerBtn');
+      const successMsg = document.getElementById('successMessage');
+      const ticketSection = document.getElementById('ticketSection');
       
       if (record.registrationDate) {
         // กรณีที่ 1: ลงทะเบียนแล้ว
@@ -450,8 +452,8 @@
         registerBtn.classList.add('btn-disabled-permanent');
         lastSavedRecord = record;
         isRegistered = true;
-        document.getElementById('ticketSection').classList.add('hidden');
-        document.getElementById('successMessage').classList.remove('hidden');
+        ticketSection.classList.add('hidden');
+        successMsg.classList.remove('hidden');
       } else {
         // กรณีที่ 2: ยังไม่ได้ลงทะเบียน
         setMsg('msgEmp', 'พร้อมลงทะเบียน', 'info');
@@ -460,8 +462,8 @@
         registerBtn.classList.remove('btn-disabled-permanent');
         lastSavedRecord = record;
         isRegistered = false;
-        document.getElementById('ticketSection').classList.add('hidden');
-        document.getElementById('successMessage').classList.add('hidden');
+        ticketSection.classList.add('hidden');
+        successMsg.classList.add('hidden');
       }
     }
 
@@ -496,7 +498,6 @@
         var key = (id + ' ' + last5 + ' ' + fullName).toLowerCase();
         
         var isRegistered = (r.registrationDate !== null);
-        // แก้ไข: เพิ่ม ✅ หน้าชื่อสำหรับคนที่ลงทะเบียนแล้ว
         var displayLabel = isRegistered ? '✅ ' + fullName : fullName;
 
         empIndex.push({ 
@@ -547,7 +548,6 @@
         row.appendChild(strong);
         if (item.fullName) {
           var spanName = document.createElement('span');
-          // แก้ไข: แสดง ✅ หน้าชื่อสำหรับคนที่ลงทะเบียนแล้ว
           spanName.textContent = ' • ' + (item.isRegistered ? '✅ ' : '') + item.fullName;
           row.appendChild(spanName);
         }
@@ -606,7 +606,7 @@
       }
     }
 
-    // ฟังก์ชันหลัก: ลงทะเบียนพนักงาน
+    // ฟังก์ชันหลัก: ลงทะเบียนพนักงาน (ปรับปรุงแล้ว)
     async function registerEmployee() {
       if (isLoading) return;
       if (!lastSavedRecord) {
@@ -623,7 +623,6 @@
         setLoading(true, ['registerBtn']);
         setMsg('msgStatus', 'กำลังลงทะเบียน...', 'info');
         
-        // ส่งข้อมูลไปบันทึกใน Google Sheets
         const result = await apiSaveEmployee({
           empId: lastSavedRecord.empId,
           firstName: lastSavedRecord.firstName,
@@ -632,23 +631,27 @@
         });
         
         if (result && result.success) {
-          // อัปเดตข้อมูลหลังจากบันทึกสำเร็จ
-          lastSavedRecord = result.record;
-          isRegistered = true;
-          
-          // อัปเดต UI
-          const registerBtn = document.getElementById('registerBtn');
-          registerBtn.textContent = '✅ ลงทะเบียนแล้ว';
-          registerBtn.disabled = true;
-          registerBtn.classList.add('btn-disabled-permanent');
-          setMsg('msgStatus', 'ลงทะเบียนสำเร็จ!', 'success');
-          setMsg('msgEmp', '❌ ลงทะเบียนแล้ว', 'warn');
-          
-          // แสดงข้อความสำเร็จแทนคูปอง
-          document.getElementById('successMessage').classList.remove('hidden');
-          
-          // ไม่แสดงคูปองแล้ว (เพิ่มความเร็วในการลงทะเบียน)
-          // renderFullTicket();
+          // === ส่วนที่เพิ่มเข้ามาเพื่อแก้ไขปัญหา ===
+          // 1. รับข้อมูลระเบียนที่อัปเดตแล้วจาก API
+          const updatedRecord = result.record;
+
+          // 2. อัปเดตข้อมูลใน empMap เพื่อให้การค้นหาครั้งต่อไปถูกต้อง
+          empMap[updatedRecord.empId] = updatedRecord;
+
+          // 3. อัปเดตข้อมูลใน empIndex เพื่อให้รายการแนะนำแสดงผลถูกต้อง
+          for (var i = 0; i < empIndex.length; i++) {
+            if (empIndex[i].empId === updatedRecord.empId) {
+              empIndex[i].isRegistered = true;
+              empIndex[i].label = (updatedRecord.empId + ' ✅ ' + updatedRecord.fullName).trim();
+              break;
+            }
+          }
+
+          // 4. เรียกฟังก์ชันเพื่ออัปเดตหน้าเว็บทันที
+          fillFormFromRecord(updatedRecord);
+
+          // 5. แสดงข้อความสำเร็จที่ได้รับจาก API
+          setMsg('msgStatus', result.message || 'ลงทะเบียนสำเร็จ!', 'success');
         } else {
           throw new Error('ไม่สามารถบันทึกข้อมูลได้');
         }
@@ -672,7 +675,6 @@
       });
     }
 
-    // ฟังก์ชันแสดงคูปองแบบเต็ม
     function renderFullTicket() {
       if (!lastSavedRecord) return;
 

@@ -387,17 +387,17 @@
       return (json.result && json.result.employees) || [];
     }
 
+    // แก้ไขฟังก์ชัน apiSaveEmployee ให้ใช้ GET request แทน POST
     async function apiSaveEmployee(employeeData) {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'saveEmployee',
-          payload: employeeData
-        })
-      });
+      const url =
+        API_URL +
+        '?action=saveEmployee' +
+        '&empId=' + encodeURIComponent(employeeData.empId) +
+        '&firstName=' + encodeURIComponent(employeeData.firstName) +
+        '&lastName=' + encodeURIComponent(employeeData.lastName) +
+        '&department=' + encodeURIComponent(employeeData.department);
+
+      const res = await fetch(url, { cache: 'no-store' });
       const json = await res.json();
       if (!json.ok) throw new Error(json.error || 'API error');
       return json.result;
